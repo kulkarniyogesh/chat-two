@@ -45,6 +45,12 @@ class Routes{
                     image : data.image
                 });
             });
+
+            socket.on('get msg',(data)=>{
+                var data_client=data;
+                 this.io.emit('set msg',JSON.stringify(data_client));
+            });
+
  
             socket.on('disconnect',()=>{
                 

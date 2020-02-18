@@ -29,7 +29,7 @@ app.factory('socket', function ($rootScope) {
     };
 });
  
-app.controller('app', function($scope,socket) {
+app.controller('app', function($scope,socket, $timeout, $window) {
  
     $scope.socketId = null;
     $scope.selectedUser = null;
@@ -37,6 +37,7 @@ app.controller('app', function($scope,socket) {
     $scope.messages = [];
     $scope.msgData = null;
     $scope.userList = [];
+    var item = {};
  
     $scope.username = window.prompt('Enter Your Name'); 
 
@@ -52,8 +53,8 @@ app.controller('app', function($scope,socket) {
               $timeout.cancel(TypeTimer);
               TypeTimer=$timeout( function(){
                   data_server={
-                      data_name:$scope.name,
-                      data_val:"Socket.io"
+                      data_name:$scope.username,
+                      data_val:"Chat Systems"
                     }
                   socket.emit('get msg',data_server); //sending data to server
                }, TypingInterval);
@@ -66,8 +67,8 @@ app.controller('app', function($scope,socket) {
           $scope.change = function() {
               $scope.counter++;
               data_server={
-                   data_name:$scope.name,
-                   data_val:$scope.name+" is typing"
+                   data_name:$scope.username,
+                   data_val:$scope.username+" is typing"
               }
               $timeout.cancel(TypeTimer); 
               socket.emit('get msg',data_server); //sending data to server
@@ -76,12 +77,11 @@ app.controller('app', function($scope,socket) {
           $scope.blur = function(){
               $timeout.cancel(TypeTimer);
               data_server={
-                   data_name:$scope.name,
-                   data_val:"Socket.io"
+                   data_name:$scope.username,
+                   data_val:"Chat Systems"
               }
               socket.emit('get msg',data_server); //sending data to server
           };
- 
  
     $scope.selectUser = function(selectedUser) {
         selectedUser === $scope.socketId ? alert("Can't message to yourself.") : $scope.selectedUser = selectedUser.id;
@@ -101,22 +101,21 @@ app.controller('app', function($scope,socket) {
        
         if (keyCode === 13 && $scope.message !== null) { 
            
-            var item = {
+            item = {
                 toid : $scope.selectedUser,
-                msg : $scope.message,
+                msg :  $scope.message,
                 name : $scope.username,
                 date : new Date().getTime(),
-                image : 'http://dummyimage.com/250x250/000/fff&text=' + $scope.username.charAt(0).toUpperCase()
+                image : 'http://dummyimage.com/250x250/000/fff&text=' + $scope.username.charAt(0).toUpperCase(),
+                isTyping: false
             }
 
             $scope.messages.push(item);
             socket.emit('getMsg',item);
             $scope.message = null;
         }       
- 
     };
- 
- 
+
     socket.emit('username',$scope.username);
  
     socket.on('userList', function(userList,socketId) {
@@ -126,6 +125,13 @@ app.controller('app', function($scope,socket) {
         $scope.userList = userList;
     });     
  
+    //Getting data from server and applying in client side
+    socket.on('set msg',function(data){
+        data=JSON.parse(data);
+         if($scope.username!=data.data_name){
+            document.title = data.data_val;
+          } 
+    }); 
  
     socket.on('exit', function(userList) {
         $scope.userList = userList;

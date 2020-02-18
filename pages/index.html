@@ -11,7 +11,7 @@
                 <h2>List of Users</h2>
                 <ul class="list-group">
                     <li class="list-group-item" 
-                        ng-repeat="user in userList"
+                        ng-repeat="user in userList track by $index"
                         ng-class="{ 'active' : user.id == selectedUser}"
                         ng-click = selectUser(user);
                         ng-style="{
@@ -19,7 +19,7 @@
                         }"
                         >
                         <span id='{{user.id}}' >{{ user.id === socketId ? 'You': user.userName }}</span>
-                    </li>
+                     </li>
                 </ul>
                     
                 </div>
@@ -31,18 +31,18 @@
                                 ng-repeat="message in messages"
                                 >
                             <div ng-class="{'me':message.name == username, 'other':message.name != username}">
-                                <span>
+                                <span ng-if="message.msg">
                                     <img class='avatar' src="{{message.image}}">
                                 </span>
 
                                 <div>
                                      <span class='user' ng-if='user.id != socketId'>{{ message.name }} </span>
                                      <span class='user' ng-if='user.id === socketId'>You </span>
-                                     <span class='date'>{{message.date | date:'dd-mm-yy h:ss'}}</span>
+                                     <span  ng-if="message.msg" class='date'>{{message.date | date:'dd-mm-yy h:ss'}}</span>
                                 </div>
                                 <div class='message-content'>
-                                    <span>{{ message.msg }}</span>
-                                </div> 
+                                    <span ng-if="message.msg">{{ message.msg }}</span> 
+                                </div>
                             </div>
                             </li>
                         </ul>

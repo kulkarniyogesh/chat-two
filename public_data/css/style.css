@@ -34,3 +34,11 @@
     border-radius: 2px;
     display: inline-block;
 }
+.message-content span.typing{
+    background-color: #FFF;
+    float: left;
+    display: block;
+    text-align: left;
+    font-size:10px;
+    color:#ccc;
+}
