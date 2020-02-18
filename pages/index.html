@@ -1,0 +1,64 @@
+<html ng-app="app"  ng-controller="app">
+    <head>
+        <title>Chat System</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 user-list">
+                <h2>List of Users</h2>
+                <ul class="list-group">
+                    <li class="list-group-item" 
+                        ng-repeat="user in userList"
+                        ng-class="{ 'active' : user.id == selectedUser}"
+                        ng-click = selectUser(user);
+                        ng-style="{
+                            'cursor': user.id === socketId ? 'not-allowed' :'pointer'
+                        }"
+                        >
+                        <span id='{{user.id}}' >{{ user.id === socketId ? 'You': user.userName }}</span>
+                    </li>
+                </ul>
+                    
+                </div>
+                <div class="col-md-8 message-box">
+                    <h2>You are chatting with : {{selectedUserName}}</h2>
+                    <div class="message-container">
+                        <ul class="list-group">
+                            <li class="list-group-item" 
+                                ng-repeat="message in messages"
+                                >
+                            <div ng-class="{'me':message.name == username, 'other':message.name != username}">
+                                <span>
+                                    <img class='avatar' src="{{message.image}}">
+                                </span>
+
+                                <div>
+                                     <span class='user' ng-if='user.id != socketId'>{{ message.name }} </span>
+                                     <span class='user' ng-if='user.id === socketId'>You </span>
+                                     <span class='date'>{{message.date | date:'dd-mm-yy h:ss'}}</span>
+                                </div>
+                                <div class='message-content'>
+                                    <span>{{ message.msg }}</span>
+                                </div> 
+                            </div>
+                            </li>
+                        </ul>
+                        <div class="alert alert-warning" ng-show='messages.length == 0'>
+                            No messages for you.
+                        </div>
+                    </div>
+                    <div class="message-sender">
+                        <textarea ng-keyup="keyup()" ng-keydown="keydown()" ng-blur="blur()"  ng-change="change()" class="form-control" ng-model='message' ng-keypress="sendMsg($event)"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body> 
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.min.js" type="text/javascript"></script>
+    <script src="js/script.js"></script>
+</html>
